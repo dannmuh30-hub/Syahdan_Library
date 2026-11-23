@@ -1,26 +1,67 @@
 @import "tailwindcss";
 
+@theme {
+  --color-stone-50: #101012;
+  --color-stone-100: #1a1a1e;
+  --color-stone-200: #2a2a30;
+  --color-stone-300: #3c3c44;
+  --color-stone-400: #70707a;
+  --color-stone-500: #9d9da7;
+  --color-stone-600: #b8b8c1;
+  --color-stone-700: #d2d2d9;
+  --color-stone-800: #e7e7ec;
+  --color-stone-900: #f6f6f8;
+
+  --color-amber-50: #230a0d;
+  --color-amber-100: #3a1015;
+  --color-amber-200: #ffd9b0;
+  --color-amber-300: #8a2a31;
+  --color-amber-600: #f5b301;
+  --color-amber-700: #ff4b55;
+  --color-amber-800: #e8303a;
+  --color-amber-900: #c5222c;
+
+  --color-red-50: #2a0b0f;
+  --color-red-100: #3d1217;
+  --color-red-200: #6a1f27;
+  --color-red-300: #8d2a34;
+  --color-red-600: #ff5a64;
+  --color-red-700: #ff7078;
+  --color-red-800: #ff9aa0;
+
+  --color-green-50: #0b2417;
+  --color-green-100: #11331f;
+  --color-green-700: #1fa35a;
+  --color-green-800: #86efac;
+
+  --color-sky-100: #0c2a3d;
+  --color-sky-800: #7dd3fc;
+
+  --font-sans: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  color-scheme: dark;
+  --background: #050506;
+  --foreground: #f6f6f8;
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
+  background-image: radial-gradient(ellipse 70% 38% at 50% -8%, rgba(232, 48, 58, 0.22), transparent 70%);
+  background-repeat: no-repeat;
+  overflow-x: clip;
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+}
+
+::selection {
+  background: rgba(232, 48, 58, 0.45);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slider-track,
+  .slider-card {
+    transition: none !important;
+  }
 }

@@ -1,20 +1,90 @@
+import { Suspense } from "react";
 import Link from "next/link";
+import PublicShell from "@/components/PublicShell";
+import AnnouncementCard from "@/components/AnnouncementCard";
+import BookSlider from "@/components/BookSlider";
+import { query } from "@/lib/db";
+
+async function HomeContent() {
+  const [{ rows: populer }, { rows: pengumuman }] = await Promise.all([
+    query(
+      `SELECT b.id, b.judul, b.pengarang, b.tahun_terbit, b.cover_url, b.category_id, c.nama AS kategori,
+              COUNT(l.id)::int AS jumlah_pinjam,
+              COALESCE((SELECT AVG(r.rating)::float8 FROM reviews r WHERE r.book_id = b.id), 0) AS rating,
+              (SELECT COUNT(*) FROM reviews r WHERE r.book_id = b.id)::int AS jumlah_ulasan
+         FROM books b
+         JOIN categories c ON c.id = b.category_id
+         JOIN loans l ON l.book_id = b.id
+        WHERE l.status IN ('Sedang Dipinjam', 'Selesai')
+        GROUP BY b.id, c.nama
+        ORDER BY jumlah_pinjam DESC, b.judul ASC
+        LIMIT 5`
+    ),
+    query(
+      `SELECT id, judul, konten, kategori, to_char(tanggal_rilis, 'YYYY-MM-DD') AS tanggal_iso
+         FROM announcements
+        WHERE status = 'Published'
+        ORDER BY tanggal_rilis DESC, id DESC
+        LIMIT 3`
+    ),
+  ]);
+
+  return (
+    <>
+      <section className="mt-8" aria-labelledby="populer">
+        <h2 id="populer" className="mb-1 text-lg font-semibold text-stone-900">
+          Buku Terpopuler
+        </h2>
+        <p className="text-sm text-stone-500">Paling banyak dipinjam. Klik kartu untuk melihat detail.</p>
+        {populer.length === 0 ? (
+          <p className="mt-4 rounded-xl border border-dashed border-stone-300 p-6 text-center text-sm text-stone-500">Belum ada data peminjaman.</p>
+        ) : (
+          <BookSlider books={populer} label="Buku terpopuler" />
+        )}
+      </section>
+
+      <section className="mt-10" aria-labelledby="pengumuman">
+        <div className="mb-3 flex items-baseline justify-between">
+          <h2 id="pengumuman" className="text-lg font-semibold text-stone-900">
+            Pengumuman Terbaru
+          </h2>
+          <Link href="/pengumuman" className="text-sm font-medium text-amber-800 hover:underline">
+            Lihat semua
+          </Link>
+        </div>
+        {pengumuman.length === 0 ? (
+          <p className="rounded-xl border border-dashed border-stone-300 p-6 text-center text-sm text-stone-500">Belum ada pengumuman.</p>
+        ) : (
+          <div className="grid gap-4 sm:grid-cols-3">
+            {pengumuman.map((a) => (
+              <AnnouncementCard key={a.id} a={a} />
+            ))}
+          </div>
+        )}
+      </section>
+    </>
+  );
+}
 
 export default function Home() {
   return (
-    <main className="mx-auto flex min-h-screen max-w-2xl flex-col justify-center px-4 py-10">
-      <h1 className="text-3xl font-bold text-stone-900">Manajemen Perpustakaan</h1>
-      <p className="mt-2 text-stone-600">
-        Katalog, pengumuman, dan layanan peminjaman buku perpustakaan kampus.
-      </p>
-      <div className="mt-6 flex gap-3">
-        <Link href="/login" className="rounded-lg bg-amber-800 px-4 py-2.5 font-medium text-white hover:bg-amber-900">
-          Masuk
-        </Link>
-        <Link href="/register" className="rounded-lg border border-stone-300 px-4 py-2.5 font-medium text-stone-700 hover:bg-stone-100">
-          Daftar
-        </Link>
-      </div>
-    </main>
+    <PublicShell>
+      <section className="px-2 pb-2 pt-6 text-center sm:pt-10">
+        <h1 className="text-3xl font-bold tracking-tight text-stone-900 sm:text-5xl">Manajemen Perpustakaan</h1>
+        <p className="mx-auto mt-3 max-w-xl text-stone-600">Temukan buku, baca pengumuman, dan ajukan peminjaman dari satu tempat.</p>
+        <form action="/katalog" method="get" className="mx-auto mt-6 flex max-w-xl gap-2" role="search">
+          <input
+            name="q"
+            aria-label="Cari buku berdasarkan judul atau pengarang"
+            placeholder="Cari judul atau pengarang"
+            className="min-w-0 flex-1 rounded-full border border-stone-300 bg-stone-50 px-5 py-2.5 outline-none focus:border-amber-700 focus:ring-2 focus:ring-amber-700/20"
+          />
+          <button className="rounded-full bg-amber-800 px-6 py-2.5 font-medium text-white hover:bg-amber-900">Cari</button>
+        </form>
+      </section>
+      <Suspense fallback={<p className="py-10 text-center text-stone-500">Memuat...</p>}>
+        <HomeContent />
+      </Suspense>
+    </PublicShell>
   );
 }
