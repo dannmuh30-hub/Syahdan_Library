@@ -1,4 +1,5 @@
 DROP VIEW  IF EXISTS v_loans_denda;
+DROP TABLE IF EXISTS book_requests CASCADE;
 DROP TABLE IF EXISTS reviews       CASCADE;
 DROP TABLE IF EXISTS loans         CASCADE;
 DROP TABLE IF EXISTS announcements CASCADE;
@@ -13,7 +14,7 @@ CREATE TABLE users (
     password_hash    VARCHAR(100) NOT NULL,
     role             VARCHAR(20)  NOT NULL
                      CHECK (role IN ('admin', 'pegawai', 'mahasiswa')),
-    nomor_identitas  VARCHAR(30)  NOT NULL UNIQUE,
+    nomor_identitas  VARCHAR(30)  NOT NULL UNIQUE,   
     is_active        BOOLEAN      NOT NULL DEFAULT TRUE,
     created_at       TIMESTAMP    NOT NULL DEFAULT NOW()
 );
@@ -38,6 +39,7 @@ CREATE TABLE books (
     durasi_maks_pinjam  INTEGER      NOT NULL DEFAULT 7 CHECK (durasi_maks_pinjam > 0),
     denda_per_hari      INTEGER      NOT NULL DEFAULT 1000 CHECK (denda_per_hari >= 0),
     cover_url           TEXT,
+    deskripsi           TEXT,
     created_at          TIMESTAMP    NOT NULL DEFAULT NOW(),
     CHECK (stok_tersedia <= stok_total)
 );
@@ -99,6 +101,25 @@ CREATE TABLE reviews (
     UNIQUE (user_id, book_id)
 );
 CREATE INDEX idx_reviews_book ON reviews(book_id);
+
+CREATE TABLE book_requests (
+    id             SERIAL PRIMARY KEY,
+    user_id        INTEGER      NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
+    judul          VARCHAR(200) NOT NULL,
+    pengarang      VARCHAR(150) NOT NULL,
+    penerbit       VARCHAR(150),
+    tahun_terbit   INTEGER      CHECK (tahun_terbit BETWEEN 1000 AND 2100),
+    alasan         TEXT,
+    status         VARCHAR(20)  NOT NULL DEFAULT 'Menunggu'
+                   CHECK (status IN ('Menunggu', 'Disetujui', 'Ditolak', 'Ditambahkan')),
+    catatan_admin  TEXT,
+    reviewed_by    INTEGER      REFERENCES users(id) ON DELETE SET NULL,
+    created_at     TIMESTAMP    NOT NULL DEFAULT NOW(),
+    reviewed_at    TIMESTAMP
+);
+CREATE INDEX idx_book_requests_user   ON book_requests(user_id);
+CREATE INDEX idx_book_requests_status ON book_requests(status);
+CREATE UNIQUE INDEX uq_request_menunggu ON book_requests (user_id, lower(judul)) WHERE status = 'Menunggu';
 
 CREATE VIEW v_loans_denda AS
 SELECT
