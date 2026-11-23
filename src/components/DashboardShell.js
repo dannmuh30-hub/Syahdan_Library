@@ -5,7 +5,7 @@ import { logoutAction } from "@/app/actions/auth";
 async function Content({ roles, title, children }) {
   const user = await requireRole(...roles);
   return (
-    <main className="mx-auto max-w-3xl px-4 py-10">
+    <main className="mx-auto w-full max-w-3xl px-4 py-10">
       <div className="flex items-start justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-stone-900">{title}</h1>
