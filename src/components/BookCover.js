@@ -1,5 +1,3 @@
-// Sampul buku. Memakai cover_url bila ada; jika tidak, dibuat sampul gradasi
-// dari id kategori supaya tiap kategori punya warna yang konsisten.
 const PALETTE = [
   ["#7f1d1d", "#1a0507"],
   ["#1e3a8a", "#050a1f"],
@@ -16,7 +14,6 @@ export function coverColors(book) {
 export default function BookCover({ book, className = "" }) {
   if (book.cover_url) {
     return (
-      // eslint-disable-next-line @next/next/no-img-element
       <img src={book.cover_url} alt={`Sampul ${book.judul}`} className={"h-full w-full object-cover " + className} loading="lazy" />
     );
   }

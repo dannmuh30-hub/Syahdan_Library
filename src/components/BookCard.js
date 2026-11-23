@@ -1,7 +1,6 @@
 import Link from "next/link";
 import BookCover from "@/components/BookCover";
 
-// Kartu poster buku untuk katalog. Seluruh kartu dapat diklik (tautan pada judul diperluas).
 export default function BookCard({ book }) {
   const habis = book.stok_tersedia <= 0;
   const punyaRating = book.jumlah_ulasan > 0;
@@ -10,7 +9,6 @@ export default function BookCard({ book }) {
       <div className="absolute inset-0 transition duration-500 group-hover:scale-105">
         <BookCover book={book} />
       </div>
-      {/* Tautan transparan menutupi seluruh kartu; tautan judul tetap menjadi target keyboard dan pembaca layar. */}
       <Link href={`/buku/${book.id}`} aria-hidden="true" tabIndex={-1} className="absolute inset-0 z-10" />
       <span className="absolute right-2.5 top-2.5 text-base font-semibold text-white drop-shadow" aria-label="Rating rata-rata">
         {punyaRating ? (

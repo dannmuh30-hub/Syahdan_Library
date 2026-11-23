@@ -1,6 +1,5 @@
 "use client";
 
-// Tombol hapus dengan konfirmasi. `action` adalah server action yang menerima formData berisi `id`.
 export default function DeleteForm({ action, id, confirmText }) {
   return (
     <form

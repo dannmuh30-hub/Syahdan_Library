@@ -6,11 +6,6 @@ import { query } from "@/lib/db";
 import { requireRole } from "@/lib/auth";
 import { parseId, validateCategoryForm, validateUserForm } from "@/lib/validation";
 
-// Setiap server action adalah endpoint publik, jadi role Admin dicek ulang
-// di sini (requireRole) dan tidak hanya mengandalkan halaman atau proxy.
-
-// ----------------------------- USERS -----------------------------
-
 export async function createUserAction(prevState, formData) {
   await requireRole("admin");
   const { values, errors } = validateUserForm(formData, "create");
@@ -44,7 +39,6 @@ export async function updateUserAction(prevState, formData) {
   const safe = { ...values, password: "" };
   if (Object.keys(errors).length > 0) return { errors, values: safe };
 
-  // Cegah admin mengunci dirinya sendiri dari sistem.
   if (id === admin.id && (values.role !== "admin" || !values.is_active)) {
     return {
       errors: { form: "Kamu tidak dapat menurunkan role atau menonaktifkan akunmu sendiri." },
@@ -72,7 +66,6 @@ export async function deleteUserAction(formData) {
   if (!id) redirect("/admin/users?err=notfound");
   if (id === admin.id) redirect("/admin/users?err=self");
 
-  // Proteksi relasi data: akun dengan transaksi tidak boleh dihapus.
   const { rows } = await query(
     `SELECT COUNT(*) FILTER (WHERE status IN ('Menunggu Konfirmasi', 'Sedang Dipinjam'))::int AS aktif,
             COUNT(*)::int AS total
@@ -92,8 +85,6 @@ export async function deleteUserAction(formData) {
   if (result.rowCount === 0) redirect("/admin/users?err=notfound");
   redirect("/admin/users?ok=deleted");
 }
-
-// --------------------------- CATEGORIES ---------------------------
 
 function categoryUniqueError(err) {
   const field = String(err.constraint).includes("kode") ? "kode" : "nama";

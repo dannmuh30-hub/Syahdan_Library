@@ -14,8 +14,6 @@ const NAV = [
   { href: "/pegawai/announcements", label: "Pengumuman" },
 ];
 
-// Kerangka semua halaman Admin. Pengecekan role terjadi sebelum `children` dirender.
-// Membaca cookie harus di dalam <Suspense> karena Cache Components aktif.
 async function Content({ title, children }) {
   const user = await requireRole("admin");
   return (

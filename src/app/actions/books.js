@@ -5,8 +5,6 @@ import { query, withTransaction } from "@/lib/db";
 import { requireRole } from "@/lib/auth";
 import { parseId, validateBookForm } from "@/lib/validation";
 
-// Book Management: menambah dan menghapus buku hanya Admin; mengubah data buku boleh Pegawai dan Admin.
-// Role dicek ulang di setiap action.
 const BOOKS = "/pegawai/books";
 
 function toDb(v) {
@@ -30,18 +28,15 @@ export async function createBookAction(prevState, formData) {
   const d = toDb(values);
   try {
     await withTransaction(async (client) => {
-      // Judul yang sama (tanpa membedakan huruf besar/kecil) tidak boleh didaftarkan dua kali.
       const dup = await client.query("SELECT 1 FROM books WHERE lower(judul) = lower($1)", [values.judul]);
       if (dup.rows.length > 0) throw Object.assign(new Error("duplicate title"), { code: "DUP_TITLE" });
 
-      // Buku baru: seluruh eksemplar tersedia (stok_tersedia = stok_total).
       await client.query(
         `INSERT INTO books (judul, isbn, pengarang, penerbit, tahun_terbit, category_id,
                             stok_total, stok_tersedia, durasi_maks_pinjam, denda_per_hari, cover_url, deskripsi)
          VALUES ($1, $2, $3, $4, $5, $6, $7, $7, $8, $9, $10, $11)`,
         [values.judul, values.isbn, values.pengarang, values.penerbit, d.tahun, d.category, d.stok, d.durasi, d.denda, d.cover, d.deskripsi]
       );
-      // Bila berasal dari request yang disetujui, tandai sudah ditambahkan ke koleksi.
       if (requestId) {
         await client.query(
           "UPDATE book_requests SET status = 'Ditambahkan', reviewed_by = $2, reviewed_at = NOW() WHERE id = $1 AND status = 'Disetujui'",
@@ -76,7 +71,6 @@ export async function updateBookAction(prevState, formData) {
       );
       if (!rows[0]) return { notFound: true };
 
-      // Eksemplar yang sedang dipinjam = stok_total - stok_tersedia.
       const dipinjam = rows[0].stok_total - rows[0].stok_tersedia;
       if (d.stok < dipinjam) {
         return { errors: { stok_total: `Stok tidak boleh kurang dari jumlah yang sedang dipinjam (${dipinjam}).` } };

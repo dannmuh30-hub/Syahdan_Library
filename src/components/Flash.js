@@ -1,4 +1,3 @@
-// Pesan hasil aksi. Kode (?ok= / ?err=) dipetakan ke teks tetap agar URL tidak bisa menyisipkan pesan sembarang.
 export default function Flash({ ok, err, messages }) {
   const okText = ok && messages.ok[ok];
   const errText = err && messages.err[err];

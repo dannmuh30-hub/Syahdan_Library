@@ -9,7 +9,6 @@ export const metadata = { title: "Katalog Buku | Perpustakaan" };
 
 const PAGE_SIZE = 12;
 
-// Urutan hanya dari daftar putih ini (nilai dari URL tidak pernah disisipkan langsung ke SQL).
 const SORTS = {
   judul: { label: "Judul (A-Z)", sql: "b.judul ASC" },
   tahun_baru: { label: "Tahun terbit (terbaru)", sql: "b.tahun_terbit DESC, b.judul ASC" },
@@ -143,7 +142,6 @@ export default function CatalogPage({ searchParams }) {
   return (
     <PublicShell>
       <h1 className="mb-4 text-2xl font-bold text-stone-900">Katalog Buku</h1>
-      {/* Query database dan searchParams bersifat dinamis, jadi harus di dalam <Suspense> (Cache Components). */}
       <Suspense fallback={<p className="py-10 text-center text-stone-500">Memuat katalog...</p>}>
         <Catalog searchParams={searchParams} />
       </Suspense>

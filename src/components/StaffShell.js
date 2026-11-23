@@ -3,7 +3,6 @@ import Link from "next/link";
 import { requireRole } from "@/lib/auth";
 import { logoutAction } from "@/app/actions/auth";
 
-// Kerangka halaman Pegawai (juga dapat diakses Admin). Role dicek sebelum `children` dirender.
 async function Content({ title, children }) {
   const user = await requireRole("pegawai", "admin");
   const nav = [

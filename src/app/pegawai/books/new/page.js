@@ -8,7 +8,6 @@ import { parseId } from "@/lib/validation";
 export const metadata = { title: "Tambah Buku" };
 
 async function NewBook({ searchParams }) {
-  // Menambah buku hanya untuk Admin; Pegawai dikembalikan ke daftar buku dengan pesan.
   const user = await requireRole("pegawai", "admin");
   if (user.role !== "admin") redirect("/pegawai/books?err=adminonly");
 
@@ -18,7 +17,6 @@ async function NewBook({ searchParams }) {
     return <p className="rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-200">Belum ada kategori. Tambahkan kategori terlebih dahulu.</p>;
   }
 
-  // Prefill dari request yang sudah disetujui (diambil dari database, bukan dari URL).
   let prefill;
   const requestId = parseId(sp.request);
   if (requestId) {

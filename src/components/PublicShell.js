@@ -2,8 +2,6 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { getCurrentUser, ROLE_HOME } from "@/lib/auth";
 
-// Header halaman publik (Guest dan Mahasiswa). Status login dibaca di dalam <Suspense>
-// tersendiri agar isi halaman tidak ikut menunggu.
 async function UserNav() {
   const user = await getCurrentUser();
   if (!user) {

@@ -1,4 +1,3 @@
-// Validasi sisi server untuk form autentikasi. Mengembalikan { values, errors }.
 
 const EMAIL_FORMAT = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -6,7 +5,6 @@ function text(formData, key) {
   return String(formData.get(key) ?? "").trim();
 }
 
-// Email kampus: domain berakhiran .ac.id (contoh: andi@student.unhas.ac.id)
 export function isCampusEmail(email) {
   return EMAIL_FORMAT.test(email) && email.toLowerCase().endsWith(".ac.id");
 }
@@ -50,14 +48,9 @@ export function validateRegister(formData) {
   return { values, errors };
 }
 
-// ---------------------------------------------------------------------
-// Hari 3: validasi form Admin (User dan Category)
-// ---------------------------------------------------------------------
 export const ROLES = ["admin", "pegawai", "mahasiswa"];
 export const ROLE_LABEL = { admin: "Admin", pegawai: "Pegawai", mahasiswa: "Mahasiswa" };
 
-// mode "create": semua field wajib, termasuk NIM dan password.
-// mode "edit"  : nama, email, role, status aktif (NIM dan password tidak diubah di sini).
 export function validateUserForm(formData, mode) {
   const values = {
     nama: text(formData, "nama"),
@@ -111,7 +104,6 @@ export function validateCategoryForm(formData) {
   return { values, errors };
 }
 
-// ID dari URL/form: kembalikan integer positif atau null.
 export function parseId(value) {
   const s = String(value ?? "");
   if (!/^\d{1,9}$/.test(s)) return null;
@@ -119,12 +111,8 @@ export function parseId(value) {
   return n > 0 ? n : null;
 }
 
-// ---------------------------------------------------------------------
-// Hari 4: validasi form Buku
-// ---------------------------------------------------------------------
 const INT = /^\d+$/;
 
-// mode "create": ISBN wajib; mode "edit": ISBN tidak diubah (sesuai spesifikasi).
 export function validateBookForm(formData, mode) {
   const values = {
     judul: text(formData, "judul"),
@@ -189,9 +177,6 @@ export function validateBookForm(formData, mode) {
   return { values, errors };
 }
 
-// ---------------------------------------------------------------------
-// Hari 5: validasi form Pengumuman
-// ---------------------------------------------------------------------
 export const ANNOUNCEMENT_CATEGORIES = ["Operasional", "Layanan", "Acara"];
 export const ANNOUNCEMENT_STATUSES = ["Draft", "Published"];
 
@@ -229,9 +214,6 @@ export function validateAnnouncementForm(formData) {
   return { values, errors };
 }
 
-// ---------------------------------------------------------------------
-// Hari 6: alasan penolakan peminjaman
-// ---------------------------------------------------------------------
 export function validateRejectReason(formData) {
   const alasan = String(formData.get("alasan") ?? "").trim();
   if (!alasan) return { alasan, error: "Alasan penolakan wajib diisi." };
@@ -239,9 +221,6 @@ export function validateRejectReason(formData) {
   return { alasan, error: null };
 }
 
-// ---------------------------------------------------------------------
-// Hari 7: validasi ulasan buku
-// ---------------------------------------------------------------------
 export function validateReview(formData) {
   const values = {
     rating: String(formData.get("rating") ?? "").trim(),
@@ -258,7 +237,6 @@ export function validateReview(formData) {
   return { values, errors };
 }
 
-// Request buku dari Mahasiswa. Hanya judul dan pengarang yang wajib.
 export function validateBookRequest(formData) {
   const values = {
     judul: text(formData, "judul"),
@@ -286,7 +264,6 @@ export function validateBookRequest(formData) {
   return { values, errors };
 }
 
-// Catatan Admin atas request buku. Wajib saat menolak, opsional saat menyetujui.
 export function validateRequestNote(formData, required) {
   const catatan = String(formData.get("catatan") ?? "").trim();
   if (required && !catatan) return { catatan, error: "Alasan penolakan wajib diisi." };

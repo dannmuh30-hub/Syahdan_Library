@@ -2,8 +2,6 @@
 
 import { useId, useState } from "react";
 
-// Kembalikan key yang naik setiap ada hasil aksi baru. Dipakai sebagai key <form> agar form
-// di-mount ulang dengan nilai terakhir; tanpa ini <select> kembali ke pilihan awal setelah error.
 export function useFormKey(state) {
   const [prev, setPrev] = useState(state);
   const [key, setKey] = useState(0);

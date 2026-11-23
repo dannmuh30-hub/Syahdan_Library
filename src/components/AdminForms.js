@@ -35,7 +35,6 @@ function Actions({ pending, cancelHref, children }) {
   );
 }
 
-// user: undefined saat membuat, atau baris users saat mengedit
 export function UserForm({ user }) {
   const editing = Boolean(user);
   const [state, action, pending] = useActionState(editing ? updateUserAction : createUserAction, null);
@@ -73,7 +72,6 @@ export function UserForm({ user }) {
   );
 }
 
-// category: undefined saat membuat, atau baris categories saat mengedit
 export function CategoryForm({ category }) {
   const editing = Boolean(category);
   const [state, action, pending] = useActionState(editing ? updateCategoryAction : createCategoryAction, null);
