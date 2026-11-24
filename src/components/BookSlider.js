@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import BookCover from "@/components/BookCover";
 
+
+
 export default function BookSlider({ books, label }) {
   const n = books.length;
   const [i, setI] = useState(Math.min(1, n - 1));
@@ -91,19 +93,6 @@ export default function BookSlider({ books, label }) {
                   <span className="absolute left-2.5 top-2.5 max-w-[60%] truncate rounded-full bg-black/55 px-2 py-0.5 text-[10px] font-medium text-white backdrop-blur">
                     {b.kategori}
                   </span>
-                  <span
-                    className="absolute right-2.5 top-2.5 text-lg font-semibold text-white drop-shadow"
-                    aria-label={b.jumlah_ulasan > 0 ? `Rating ${b.rating.toFixed(1)} dari 5` : "Belum ada rating"}
-                  >
-                    {b.jumlah_ulasan > 0 ? (
-                      <>
-                        {b.rating.toFixed(1)}
-                        <span className="text-amber-600">★</span>
-                      </>
-                    ) : (
-                      <span className="text-xs font-normal text-white/70">Baru</span>
-                    )}
-                  </span>
                   <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent px-3 pb-3 pt-12">
                     <span className="block text-sm font-semibold leading-tight text-white [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:2] overflow-hidden">
                       {b.judul}
@@ -112,6 +101,18 @@ export default function BookSlider({ books, label }) {
                     <span className="mt-1.5 flex gap-1.5 text-[10px] text-white/80">
                       <span className="rounded-md bg-white/15 px-1.5 py-0.5">{b.tahun_terbit}</span>
                       <span className="rounded-md bg-white/15 px-1.5 py-0.5">{b.jumlah_pinjam}x dipinjam</span>
+                      <span
+                        className="rounded-md bg-white/15 px-1.5 py-0.5"
+                        aria-label={b.jumlah_ulasan > 0 ? `Rating ${b.rating.toFixed(1)} dari 5` : "Belum ada rating"}
+                      >
+                        {b.jumlah_ulasan > 0 ? (
+                          <>
+                            <span className="text-amber-600">★</span> {b.rating.toFixed(1)}
+                          </>
+                        ) : (
+                          "Baru"
+                        )}
+                      </span>
                     </span>
                   </span>
                 </Link>
@@ -123,12 +124,13 @@ export default function BookSlider({ books, label }) {
 
       {n > 1 && (
         <div className="mt-2 flex items-center justify-center gap-3">
-          <button type="button" onClick={() => go(-1)} aria-label="Sebelumnya" className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20">
+          <button suppressHydrationWarning type="button" onClick={() => go(-1)} aria-label="Sebelumnya" className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20">
             ‹
           </button>
           <div className="flex items-center gap-1.5" role="group" aria-label="Pilih slide">
             {books.map((b, idx) => (
               <button
+                suppressHydrationWarning
                 key={b.id}
                 type="button"
                 onClick={() => setI(idx)}
@@ -138,10 +140,10 @@ export default function BookSlider({ books, label }) {
               />
             ))}
           </div>
-          <button type="button" onClick={() => go(1)} aria-label="Berikutnya" className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20">
+          <button suppressHydrationWarning type="button" onClick={() => go(1)} aria-label="Berikutnya" className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20">
             ›
           </button>
-          <button type="button" onClick={() => setManualPause((p) => !p)} className="ml-1 rounded-full border border-white/20 px-3 py-1 text-xs text-white/80 hover:bg-white/10" aria-pressed={manualPause}>
+          <button suppressHydrationWarning type="button" onClick={() => setManualPause((p) => !p)} className="ml-1 rounded-full border border-white/20 px-3 py-1 text-xs text-white/80 hover:bg-white/10" aria-pressed={manualPause}>
             {manualPause ? "Putar" : "Jeda"}
           </button>
         </div>
