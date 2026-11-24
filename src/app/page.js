@@ -5,8 +5,10 @@ import AnnouncementCard from "@/components/AnnouncementCard";
 import BookSlider from "@/components/BookSlider";
 import { query } from "@/lib/db";
 
+
 async function HomeContent() {
   const [{ rows: populer }, { rows: pengumuman }] = await Promise.all([
+    
     query(
       `SELECT b.id, b.judul, b.pengarang, b.tahun_terbit, b.cover_url, b.category_id, c.nama AS kategori,
               COUNT(l.id)::int AS jumlah_pinjam,
@@ -32,10 +34,15 @@ async function HomeContent() {
   return (
     <>
       <section className="mt-8" aria-labelledby="populer">
-        <h2 id="populer" className="mb-1 text-lg font-semibold text-stone-900">
-          Buku Terpopuler
-        </h2>
-        <p className="text-sm text-stone-500">Paling banyak dipinjam. Klik kartu untuk melihat detail.</p>
+        <div className="flex items-baseline justify-between gap-3">
+          <h2 id="populer" className="text-lg font-semibold text-stone-900">
+            Buku Terpopuler
+          </h2>
+          <Link href="/katalog" className="text-sm font-medium text-amber-800 hover:underline">
+            Lihat semua
+          </Link>
+        </div>
+        <p className="mt-1 text-sm text-stone-500">Paling banyak dipinjam. Klik kartu untuk melihat detail.</p>
         {populer.length === 0 ? (
           <p className="mt-4 rounded-xl border border-dashed border-stone-300 p-6 text-center text-sm text-stone-500">Belum ada data peminjaman.</p>
         ) : (
@@ -74,12 +81,13 @@ export default function Home() {
         <p className="mx-auto mt-3 max-w-xl text-stone-600">Temukan buku, baca pengumuman, dan ajukan peminjaman dari satu tempat.</p>
         <form action="/katalog" method="get" className="mx-auto mt-6 flex max-w-xl gap-2" role="search">
           <input
+            suppressHydrationWarning
             name="q"
             aria-label="Cari buku berdasarkan judul atau pengarang"
             placeholder="Cari judul atau pengarang"
             className="min-w-0 flex-1 rounded-full border border-stone-300 bg-stone-50 px-5 py-2.5 outline-none focus:border-amber-700 focus:ring-2 focus:ring-amber-700/20"
           />
-          <button className="rounded-full bg-amber-800 px-6 py-2.5 font-medium text-white hover:bg-amber-900">Cari</button>
+          <button suppressHydrationWarning className="rounded-full bg-amber-800 px-6 py-2.5 font-medium text-white hover:bg-amber-900">Cari</button>
         </form>
       </section>
       <Suspense fallback={<p className="py-10 text-center text-stone-500">Memuat...</p>}>
