@@ -1,6 +1,14 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { getCurrentUser, ROLE_HOME } from "@/lib/auth";
+import NavLinks, { NavLinksPlain } from "@/components/NavLinks";
+
+const PUBLIC_NAV = [
+  { href: "/katalog", label: "Katalog", also: ["/buku"] },
+  { href: "/pengumuman", label: "Pengumuman" },
+];
+
+
 
 async function UserNav() {
   const user = await getCurrentUser();
@@ -30,18 +38,16 @@ export default function PublicShell({ children }) {
   return (
     <div className="mx-auto w-full max-w-5xl px-4 py-6">
       <header className="flex flex-wrap items-center justify-between gap-3 border-b border-stone-200 pb-4">
-        <nav className="flex items-center gap-1 text-sm">
+        <div className="flex flex-wrap items-center gap-1">
           <Link href="/" className="mr-3 flex items-center gap-2 text-lg font-bold tracking-tight text-stone-900">
             <span aria-hidden="true" className="inline-block h-3 w-3 rounded-full bg-amber-800 shadow-[0_0_14px_3px_rgba(232,48,58,0.7)]" />
             Perpustakaan
           </Link>
-          <Link href="/katalog" className="rounded-lg px-3 py-1.5 font-medium text-stone-700 hover:bg-stone-100">
-            Katalog
-          </Link>
-          <Link href="/pengumuman" className="rounded-lg px-3 py-1.5 font-medium text-stone-700 hover:bg-stone-100">
-            Pengumuman
-          </Link>
-        </nav>
+          {}
+          <Suspense fallback={<NavLinksPlain items={PUBLIC_NAV} />}>
+            <NavLinks items={PUBLIC_NAV} />
+          </Suspense>
+        </div>
         <Suspense fallback={<div className="h-8 w-32" />}>
           <UserNav />
         </Suspense>

@@ -256,5 +256,18 @@ feat(db): tambah skrip sampul_buku.sql untuk 28 buku
 docs: catat sampul buku di README dan PROGRESS
 ```
 
+### Penanda Menu Aktif pada Navbar (19 November 2026)
+- Komponen baru `NavLinks` menandai halaman yang sedang dibuka dengan pil merah solid dan `aria-current="page"`; menu lain berwarna abu dan berubah saat disorot. Dipakai di navbar publik, Mahasiswa, Pegawai, dan Admin.
+- Aturan aktif: Dashboard/Beranda hanya aktif pada path yang sama persis; menu lain juga aktif di sub-halamannya (mis. Peminjaman Saya aktif di halaman ulasan, Katalog aktif di detail buku).
+- Navbar publik dibungkus `Suspense` karena halaman publik di-prerender (ditemukan saat build produksi dan diperbaiki).
+- Menguji 25 kombinasi halaman dan peran, warna aktif versus tidak aktif, dan 375px; regresi, build produksi, dan lint lulus.
+
+Contoh pesan commit:
+```text
+feat(ui): tambah NavLinks dengan penanda menu aktif di semua navbar
+fix(ui): bungkus navbar publik dengan Suspense agar build produksi lolos
+docs: catat penanda menu aktif di PROGRESS
+```
+
 ## Akun Demo
 Lihat tabel di `README.md`. Password: admin123 / pegawai123 / mahasiswa123.
