@@ -130,8 +130,7 @@ Cek versi dengan `node -v`, `npm -v`, dan `psql --version`.
 ### 1️⃣ Clone Repository
 
 ```bash
-git clone https://github.com/Eriz157/<nama-repository>.git
-cd <nama-repository>
+git clone https://github.com/dannmuh30-hub/Syahdan_Library.git
 ```
 
 ### 2️⃣ Install Dependencies
@@ -217,7 +216,7 @@ Tersedia setelah menjalankan `database/seed.sql`:
 
 | Peran | Email | Password |
 |---|---|---|
-| 👨‍💼 Admin | `admin@perpus.ac.id` | `admin123` |
+| 👨‍💼 Admin | `admin@perpus.ac.id` | `admin321` |
 | 🧑‍💼 Pegawai | `pegawai@perpus.ac.id` | `pegawai123` |
 | 🎓 Mahasiswa | `andi@student.unhas.ac.id` | `mahasiswa123` |
 | 🎓 Mahasiswa | `siti@student.unhas.ac.id` | `mahasiswa123` |
