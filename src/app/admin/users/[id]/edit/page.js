@@ -10,7 +10,7 @@ async function EditUser({ params }) {
   const id = parseId((await params).id);
   if (!id) notFound();
   const { rows } = await query(
-    "SELECT id, nama, email, nomor_identitas, role, is_active FROM users WHERE id = $1",
+    "SELECT id, nama, email, nomor_identitas, role, is_active FROM users WHERE id = $1 AND role <> 'admin'",
     [id]
   );
   if (!rows[0]) notFound();

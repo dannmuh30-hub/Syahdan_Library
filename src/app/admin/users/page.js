@@ -4,7 +4,7 @@ import DeleteForm from "@/components/DeleteForm";
 import Flash from "@/components/Flash";
 import { query } from "@/lib/db";
 import { deleteUserAction } from "@/app/actions/admin";
-import { ROLES, ROLE_LABEL } from "@/lib/validation";
+import { ASSIGNABLE_ROLES, ROLE_LABEL } from "@/lib/validation";
 
 export const metadata = { title: "Manajemen User | Admin" };
 
@@ -12,20 +12,20 @@ const MESSAGES = {
   ok: { created: "User berhasil ditambahkan.", updated: "User berhasil diperbarui.", deleted: "User berhasil dihapus." },
   err: {
     self: "Kamu tidak dapat menghapus akunmu sendiri.",
-    active: "User tidak dapat dihapus karena masih memiliki transaksi aktif.",
-    history: "User tidak dapat dihapus karena memiliki riwayat transaksi. Nonaktifkan akunnya lewat Edit.",
+    active: "User tidak dapat dihapus karena masih memiliki peminjaman yang berjalan.",
+    fine: "User tidak dapat dihapus karena masih memiliki denda yang belum lunas.",
     notfound: "User tidak ditemukan.",
   },
 };
 
 async function UserList({ searchParams }) {
   const sp = await searchParams;
-  const role = ROLES.includes(sp.role) ? sp.role : null;
+  const role = ASSIGNABLE_ROLES.includes(sp.role) ? sp.role : null;
   const { rows: users } = await query(
     `SELECT id, nama, email, nomor_identitas, role, is_active
        FROM users
-      WHERE ($1::text IS NULL OR role = $1)
-      ORDER BY CASE role WHEN 'admin' THEN 1 WHEN 'pegawai' THEN 2 ELSE 3 END, nama`,
+      WHERE role <> 'admin' AND ($1::text IS NULL OR role = $1)
+      ORDER BY CASE role WHEN 'pegawai' THEN 1 ELSE 2 END, nama`,
     [role]
   );
 
@@ -34,7 +34,7 @@ async function UserList({ searchParams }) {
       <Flash ok={sp.ok} err={sp.err} messages={MESSAGES} />
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-wrap gap-2 text-sm" aria-label="Filter role">
-          {[null, ...ROLES].map((r) => (
+          {[null, ...ASSIGNABLE_ROLES].map((r) => (
             <Link
               key={r ?? "semua"}
               href={r ? `/admin/users?role=${r}` : "/admin/users"}
@@ -86,7 +86,7 @@ async function UserList({ searchParams }) {
                     <Link href={`/admin/users/${u.id}/edit`} className="text-sm font-medium text-amber-800 hover:underline">
                       Edit
                     </Link>
-                    <DeleteForm action={deleteUserAction} id={u.id} confirmText={`Hapus user "${u.nama}"?`} />
+                    <DeleteForm action={deleteUserAction} id={u.id} confirmText={`Hapus user "${u.nama}"? Riwayat peminjaman dan ulasannya juga akan ikut terhapus.`} />
                   </div>
                 </td>
               </tr>

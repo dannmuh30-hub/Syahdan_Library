@@ -2,9 +2,14 @@
 
 import bcrypt from "bcryptjs";
 import { redirect } from "next/navigation";
-import { query } from "@/lib/db";
+import { query, withTransaction } from "@/lib/db";
 import { requireRole } from "@/lib/auth";
 import { parseId, validateCategoryForm, validateUserForm } from "@/lib/validation";
+
+
+
+
+
 
 export async function createUserAction(prevState, formData) {
   await requireRole("admin");
@@ -31,7 +36,7 @@ export async function createUserAction(prevState, formData) {
 }
 
 export async function updateUserAction(prevState, formData) {
-  const admin = await requireRole("admin");
+  await requireRole("admin");
   const id = parseId(formData.get("id"));
   if (!id) redirect("/admin/users?err=notfound");
 
@@ -39,24 +44,44 @@ export async function updateUserAction(prevState, formData) {
   const safe = { ...values, password: "" };
   if (Object.keys(errors).length > 0) return { errors, values: safe };
 
-  if (id === admin.id && (values.role !== "admin" || !values.is_active)) {
-    return {
-      errors: { form: "Kamu tidak dapat menurunkan role atau menonaktifkan akunmu sendiri." },
-      values: safe,
-    };
-  }
-
+  
+  
+  
   let result;
   try {
     result = await query(
-      `UPDATE users SET nama = $1, email = $2, role = $3, is_active = $4 WHERE id = $5`,
+      `UPDATE users u SET nama = $1, email = $2, role = $3, is_active = $4
+        WHERE u.id = $5 AND u.role <> 'admin'
+          AND ($3::text <> 'pegawai' OR u.role <> 'mahasiswa' OR NOT EXISTS (
+                SELECT 1 FROM loans l
+                 WHERE l.user_id = u.id
+                   AND (l.status IN ('Menunggu Konfirmasi', 'Sedang Dipinjam') OR l.status_denda = 'Tertunggak')))`,
       [values.nama, values.email, values.role, values.is_active, id]
     );
   } catch (err) {
     if (err.code === "23505") return { errors: { email: "Email sudah dipakai akun lain." }, values: safe };
     throw err;
   }
-  if (result.rowCount === 0) redirect("/admin/users?err=notfound");
+  if (result.rowCount === 0) {
+    
+    const { rows } = await query(
+      `SELECT u.id,
+              (SELECT COUNT(*)::int FROM loans l WHERE l.user_id = u.id AND l.status IN ('Menunggu Konfirmasi', 'Sedang Dipinjam')) AS aktif,
+              (SELECT COUNT(*)::int FROM loans l WHERE l.user_id = u.id AND l.status_denda = 'Tertunggak') AS denda
+         FROM users u WHERE u.id = $1 AND u.role <> 'admin'`,
+      [id]
+    );
+    if (rows.length === 0) redirect("/admin/users?err=notfound");
+    const alasan = [];
+    if (rows[0].aktif > 0) alasan.push(`${rows[0].aktif} peminjaman yang masih berjalan`);
+    if (rows[0].denda > 0) alasan.push(`${rows[0].denda} denda yang belum lunas`);
+    return {
+      errors: {
+        role: `Belum bisa dijadikan Pegawai: mahasiswa ini masih punya ${alasan.join(" dan ") || "transaksi yang belum selesai"}. Selesaikan dulu semuanya.`,
+      },
+      values: safe,
+    };
+  }
   redirect("/admin/users?ok=updated");
 }
 
@@ -66,25 +91,33 @@ export async function deleteUserAction(formData) {
   if (!id) redirect("/admin/users?err=notfound");
   if (id === admin.id) redirect("/admin/users?err=self");
 
-  const { rows } = await query(
-    `SELECT COUNT(*) FILTER (WHERE status IN ('Menunggu Konfirmasi', 'Sedang Dipinjam'))::int AS aktif,
-            COUNT(*)::int AS total
-       FROM loans WHERE user_id = $1`,
-    [id]
-  );
-  if (rows[0].aktif > 0) redirect("/admin/users?err=active");
-  if (rows[0].total > 0) redirect("/admin/users?err=history");
+  
+  
+  
+  const hasil = await withTransaction(async (client) => {
+    const { rows: target } = await client.query("SELECT id FROM users WHERE id = $1 AND role <> 'admin' FOR UPDATE", [id]);
+    if (target.length === 0) return "notfound";
 
-  let result;
-  try {
-    result = await query("DELETE FROM users WHERE id = $1", [id]);
-  } catch (err) {
-    if (err.code === "23503") redirect("/admin/users?err=history");
-    throw err;
-  }
-  if (result.rowCount === 0) redirect("/admin/users?err=notfound");
-  redirect("/admin/users?ok=deleted");
+    const { rows } = await client.query(
+      `SELECT COUNT(*) FILTER (WHERE status IN ('Menunggu Konfirmasi', 'Sedang Dipinjam'))::int AS aktif,
+              COUNT(*) FILTER (WHERE status_denda = 'Tertunggak')::int AS denda
+         FROM loans WHERE user_id = $1`,
+      [id]
+    );
+    if (rows[0].aktif > 0) return "active";
+    if (rows[0].denda > 0) return "fine";
+
+    await client.query("DELETE FROM book_requests WHERE user_id = $1", [id]);
+    await client.query("DELETE FROM loans WHERE user_id = $1", [id]); 
+    await client.query("DELETE FROM users WHERE id = $1 AND role <> 'admin'", [id]);
+    return "deleted";
+  });
+
+  if (hasil === "deleted") redirect("/admin/users?ok=deleted");
+  redirect(`/admin/users?err=${hasil}`);
 }
+
+
 
 function categoryUniqueError(err) {
   const field = String(err.constraint).includes("kode") ? "kode" : "nama";

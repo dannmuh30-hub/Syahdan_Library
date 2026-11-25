@@ -1,8 +1,31 @@
 
+
 const EMAIL_FORMAT = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function text(formData, key) {
   return String(formData.get(key) ?? "").trim();
+}
+
+
+
+const NAMA_FORMAT = /^[\p{L}][\p{L}\s.'-]*$/u;
+
+const EMAIL_LOCAL_FORMAT = /^[a-z0-9]+$/;
+const EMAIL_DOMAIN_FORMAT = /^[a-z0-9-]+(\.[a-z0-9-]+)+$/;
+
+export function namaFormatError(nama) {
+  if (/\d/.test(nama)) return "Nama lengkap tidak boleh mengandung angka.";
+  if (!NAMA_FORMAT.test(nama)) return "Nama lengkap hanya boleh berisi huruf, spasi, titik, apostrof, dan tanda hubung.";
+  return null;
+}
+
+export function emailCharError(email) {
+  const at = email.lastIndexOf("@");
+  const local = email.slice(0, at);
+  const domain = email.slice(at + 1);
+  if (!EMAIL_LOCAL_FORMAT.test(local)) return "Bagian sebelum @ hanya boleh huruf dan angka (tanpa titik, spasi, atau simbol).";
+  if (!EMAIL_DOMAIN_FORMAT.test(domain)) return "Domain email hanya boleh berisi huruf, angka, titik, dan tanda hubung.";
+  return null;
 }
 
 export function isCampusEmail(email) {
@@ -30,9 +53,11 @@ export function validateRegister(formData) {
 
   if (!values.nama) errors.nama = "Nama lengkap wajib diisi.";
   else if (values.nama.length < 3 || values.nama.length > 100) errors.nama = "Nama harus 3-100 karakter.";
+  else if (namaFormatError(values.nama)) errors.nama = namaFormatError(values.nama);
 
   if (!values.email) errors.email = "Email wajib diisi.";
   else if (!EMAIL_FORMAT.test(values.email)) errors.email = "Format email tidak valid.";
+  else if (emailCharError(values.email)) errors.email = emailCharError(values.email);
   else if (!isCampusEmail(values.email)) errors.email = "Gunakan email kampus (berakhiran .ac.id).";
 
   if (!values.nomor_identitas) errors.nomor_identitas = "NIM wajib diisi.";
@@ -48,8 +73,15 @@ export function validateRegister(formData) {
   return { values, errors };
 }
 
+
+
+
 export const ROLES = ["admin", "pegawai", "mahasiswa"];
+
+export const ASSIGNABLE_ROLES = ["pegawai", "mahasiswa"];
 export const ROLE_LABEL = { admin: "Admin", pegawai: "Pegawai", mahasiswa: "Mahasiswa" };
+
+
 
 export function validateUserForm(formData, mode) {
   const values = {
@@ -64,13 +96,15 @@ export function validateUserForm(formData, mode) {
 
   if (!values.nama) errors.nama = "Nama lengkap wajib diisi.";
   else if (values.nama.length < 3 || values.nama.length > 100) errors.nama = "Nama harus 3-100 karakter.";
+  else if (namaFormatError(values.nama)) errors.nama = namaFormatError(values.nama);
 
   if (!values.email) errors.email = "Email wajib diisi.";
   else if (!EMAIL_FORMAT.test(values.email)) errors.email = "Format email tidak valid.";
+  else if (emailCharError(values.email)) errors.email = emailCharError(values.email);
   else if (values.email.length > 150) errors.email = "Email maksimal 150 karakter.";
 
   if (!values.role) errors.role = "Role wajib dipilih.";
-  else if (!ROLES.includes(values.role)) errors.role = "Role tidak valid.";
+  else if (!ASSIGNABLE_ROLES.includes(values.role)) errors.role = "Role tidak valid.";
 
   if (mode === "create") {
     if (!values.nomor_identitas) errors.nomor_identitas = "Nomor identitas (NIM/NIP) wajib diisi.";
@@ -104,6 +138,7 @@ export function validateCategoryForm(formData) {
   return { values, errors };
 }
 
+
 export function parseId(value) {
   const s = String(value ?? "");
   if (!/^\d{1,9}$/.test(s)) return null;
@@ -111,7 +146,11 @@ export function parseId(value) {
   return n > 0 ? n : null;
 }
 
+
+
+
 const INT = /^\d+$/;
+
 
 export function validateBookForm(formData, mode) {
   const values = {
@@ -177,6 +216,9 @@ export function validateBookForm(formData, mode) {
   return { values, errors };
 }
 
+
+
+
 export const ANNOUNCEMENT_CATEGORIES = ["Operasional", "Layanan", "Acara"];
 export const ANNOUNCEMENT_STATUSES = ["Draft", "Published"];
 
@@ -214,12 +256,18 @@ export function validateAnnouncementForm(formData) {
   return { values, errors };
 }
 
+
+
+
 export function validateRejectReason(formData) {
   const alasan = String(formData.get("alasan") ?? "").trim();
   if (!alasan) return { alasan, error: "Alasan penolakan wajib diisi." };
   if (alasan.length < 3 || alasan.length > 300) return { alasan, error: "Alasan penolakan harus 3-300 karakter." };
   return { alasan, error: null };
 }
+
+
+
 
 export function validateReview(formData) {
   const values = {
@@ -236,6 +284,7 @@ export function validateReview(formData) {
 
   return { values, errors };
 }
+
 
 export function validateBookRequest(formData) {
   const values = {
@@ -264,9 +313,48 @@ export function validateBookRequest(formData) {
   return { values, errors };
 }
 
+
 export function validateRequestNote(formData, required) {
   const catatan = String(formData.get("catatan") ?? "").trim();
   if (required && !catatan) return { catatan, error: "Alasan penolakan wajib diisi." };
   if (catatan && (catatan.length < 3 || catatan.length > 300)) return { catatan, error: "Catatan harus 3-300 karakter." };
   return { catatan, error: null };
+}
+
+
+
+
+export function validateProfile(formData, role) {
+  const values = { nama: text(formData, "nama"), email: text(formData, "email").toLowerCase() };
+  const errors = {};
+
+  if (!values.nama) errors.nama = "Nama lengkap wajib diisi.";
+  else if (values.nama.length < 3 || values.nama.length > 100) errors.nama = "Nama harus 3-100 karakter.";
+  else if (namaFormatError(values.nama)) errors.nama = namaFormatError(values.nama);
+
+  if (!values.email) errors.email = "Email wajib diisi.";
+  else if (!EMAIL_FORMAT.test(values.email)) errors.email = "Format email tidak valid.";
+  else if (emailCharError(values.email)) errors.email = emailCharError(values.email);
+  else if (values.email.length > 150) errors.email = "Email maksimal 150 karakter.";
+  else if (role === "mahasiswa" && !isCampusEmail(values.email)) errors.email = "Gunakan email kampus (berakhiran .ac.id).";
+
+  return { values, errors };
+}
+
+export function validatePasswordChange(formData) {
+  const lama = String(formData.get("lama") ?? "");
+  const baru = String(formData.get("baru") ?? "");
+  const konfirmasi = String(formData.get("konfirmasi") ?? "");
+  const errors = {};
+
+  if (!lama) errors.lama = "Password saat ini wajib diisi.";
+  if (!baru) errors.baru = "Password baru wajib diisi.";
+  else if (baru.length < 8) errors.baru = "Password baru minimal 8 karakter.";
+  else if (baru.length > 72) errors.baru = "Password baru maksimal 72 karakter.";
+  else if (baru === lama) errors.baru = "Password baru harus berbeda dari password saat ini.";
+
+  if (!konfirmasi) errors.konfirmasi = "Konfirmasi password wajib diisi.";
+  else if (konfirmasi !== baru) errors.konfirmasi = "Konfirmasi password tidak sama.";
+
+  return { errors };
 }
