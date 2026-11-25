@@ -6,7 +6,7 @@ import CatalogFilters from "@/components/CatalogFilters";
 import { query } from "@/lib/db";
 import { parseId } from "@/lib/validation";
 
-export const metadata = { title: "Katalog Buku | Perpustakaan" };
+export const metadata = { title: "Katalog Buku | Nongkread" };
 
 const PAGE_SIZE = 12;
 
@@ -115,6 +115,9 @@ async function Catalog({ searchParams }) {
 export default function CatalogPage({ searchParams }) {
   return (
     <PublicShell>
+      <Link href="/" className="mb-3 inline-flex items-center gap-1.5 text-sm font-medium text-stone-600 hover:text-stone-900">
+        <span aria-hidden="true">←</span> Kembali ke Beranda
+      </Link>
       <h1 className="mb-4 text-2xl font-bold text-stone-900">Katalog Buku</h1>
       {}
       <Suspense fallback={<p className="py-10 text-center text-stone-500">Memuat katalog...</p>}>

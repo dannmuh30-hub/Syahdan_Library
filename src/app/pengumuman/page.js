@@ -3,7 +3,7 @@ import PublicShell from "@/components/PublicShell";
 import AnnouncementCard from "@/components/AnnouncementCard";
 import { query } from "@/lib/db";
 
-export const metadata = { title: "Pengumuman | Perpustakaan" };
+export const metadata = { title: "Pengumuman | Nongkread" };
 
 async function AnnouncementFeed() {
   const { rows } = await query(

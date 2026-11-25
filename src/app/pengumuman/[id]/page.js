@@ -7,7 +7,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { parseId } from "@/lib/validation";
 import { formatTanggal } from "@/lib/format";
 
-export const metadata = { title: "Detail Pengumuman | Perpustakaan" };
+export const metadata = { title: "Detail Pengumuman | Nongkread" };
 
 async function AnnouncementDetail({ params }) {
   const id = parseId((await params).id);
@@ -22,6 +22,7 @@ async function AnnouncementDetail({ params }) {
   const a = rows[0];
   if (!a) notFound();
 
+  
   const isDraft = a.status !== "Published";
   if (isDraft) {
     const user = await getCurrentUser();

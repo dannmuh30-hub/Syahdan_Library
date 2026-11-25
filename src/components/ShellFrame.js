@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Avatar from "@/components/Avatar";
 import ThemeToggle from "@/components/ThemeToggle";
+import BrandLogo from "@/components/BrandLogo";
 
 
 const ICONS = {
@@ -39,7 +40,7 @@ function isActive(pathname, item) {
 function Brand() {
   return (
     <span className="flex items-center gap-2 text-lg font-bold tracking-tight text-stone-900">
-      <span aria-hidden="true" className="inline-block h-3 w-3 rounded-full bg-amber-800 shadow-[0_0_14px_3px_rgba(232,48,58,0.7)]" />
+      <BrandLogo size={26} />
       Nongkread
     </span>
   );
@@ -105,7 +106,7 @@ export default function ShellFrame({ groups, user, roleLabel, home = "/", title,
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
-
+  
   useEffect(() => {
     if (!open) return;
     const onKey = (e) => e.key === "Escape" && setOpen(false);
@@ -115,7 +116,7 @@ export default function ShellFrame({ groups, user, roleLabel, home = "/", title,
 
   return (
     <div className="flex w-full flex-1">
-      { }
+      {}
       <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r border-stone-200 bg-stone-50 lg:flex">
         <div className="px-6 py-5">
           <Link href={home}><Brand /></Link>
@@ -124,7 +125,7 @@ export default function ShellFrame({ groups, user, roleLabel, home = "/", title,
         <UserBox user={user} roleLabel={roleLabel} logout={logout} />
       </aside>
 
-      { }
+      {}
       <div className="flex min-w-0 flex-1 flex-col">
         <div className="sticky top-0 z-30 flex items-center justify-between border-b border-stone-200 bg-stone-50/95 px-4 py-3 backdrop-blur lg:hidden">
           <button

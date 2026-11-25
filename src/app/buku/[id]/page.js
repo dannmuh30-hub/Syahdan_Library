@@ -10,7 +10,7 @@ import { ajukanPinjamAction } from "@/app/actions/loans";
 import { parseId } from "@/lib/validation";
 import { formatRupiah, formatTanggal } from "@/lib/format";
 
-export const metadata = { title: "Detail Buku | Perpustakaan" };
+export const metadata = { title: "Detail Buku | Nongkread" };
 
 const MESSAGES = {
   ok: { requested: "Pengajuan peminjaman terkirim. Tunggu konfirmasi Pegawai di meja sirkulasi. Pantau statusnya di menu Peminjaman Saya." },
@@ -22,6 +22,7 @@ const MESSAGES = {
 };
 
 const btn = "inline-block rounded-lg px-4 py-2.5 text-sm font-medium";
+
 
 async function BorrowPanel({ book }) {
   const user = await getCurrentUser();
@@ -110,7 +111,7 @@ async function BookDetail({ params, searchParams }) {
     <>
       <Flash ok={sp.ok} err={sp.err} messages={MESSAGES} />
       <div className="flex flex-col gap-6 sm:flex-row">
-        <div className="aspect-[2/3] w-44 shrink-0 self-start overflow-hidden rounded-2xl border border-white/10 shadow-[0_20px_60px_-15px_rgba(232,48,58,0.55)]">
+        <div className="aspect-[2/3] w-44 shrink-0 self-start overflow-hidden rounded-2xl border border-stone-200 shadow-[0_20px_60px_-15px_rgba(232,48,58,0.55)]">
           <BookCover book={b} />
         </div>
         <div className="min-w-0 flex-1">

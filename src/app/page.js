@@ -3,6 +3,7 @@ import Link from "next/link";
 import PublicShell from "@/components/PublicShell";
 import AnnouncementCard from "@/components/AnnouncementCard";
 import BookSlider from "@/components/BookSlider";
+import BrandLogo from "@/components/BrandLogo";
 import { query } from "@/lib/db";
 
 
@@ -77,17 +78,19 @@ export default function Home() {
   return (
     <PublicShell>
       <section className="px-2 pb-2 pt-6 text-center sm:pt-10">
-        <h1 className="text-3xl font-bold tracking-tight text-stone-900 sm:text-5xl">Manajemen Perpustakaan</h1>
+        <div className="mb-3 flex justify-center">
+          <BrandLogo size={72} className="h-16 w-16 sm:h-20 sm:w-20" />
+        </div>
+        <h1 className="text-3xl font-bold tracking-tight text-stone-900 sm:text-5xl">Nongkread</h1>
         <p className="mx-auto mt-3 max-w-xl text-stone-600">Temukan buku, baca pengumuman, dan ajukan peminjaman dari satu tempat.</p>
         <form action="/katalog" method="get" className="mx-auto mt-6 flex max-w-xl gap-2" role="search">
           <input
-            suppressHydrationWarning
             name="q"
             aria-label="Cari buku berdasarkan judul atau pengarang"
             placeholder="Cari judul atau pengarang"
             className="min-w-0 flex-1 rounded-full border border-stone-300 bg-stone-50 px-5 py-2.5 outline-none focus:border-amber-700 focus:ring-2 focus:ring-amber-700/20"
           />
-          <button suppressHydrationWarning className="rounded-full bg-amber-800 px-6 py-2.5 font-medium text-white hover:bg-amber-900">Cari</button>
+          <button className="rounded-full bg-amber-800 px-6 py-2.5 font-medium text-white hover:bg-amber-900">Cari</button>
         </form>
       </section>
       <Suspense fallback={<p className="py-10 text-center text-stone-500">Memuat...</p>}>
