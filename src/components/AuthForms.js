@@ -38,7 +38,7 @@ export function LoginForm() {
         </Link>
       </p>
       <Link
-        href="/katalog"
+        href="/"
         className="block w-full rounded-lg border border-stone-300 px-4 py-2.5 text-center font-medium text-stone-700 hover:bg-stone-100"
       >
         Continue as Guest
@@ -55,7 +55,7 @@ export function RegisterForm() {
   return (
     <form key={formKey} action={action} className="space-y-4" noValidate>
       <Field label="Nama lengkap" name="nama" autoComplete="name" defaultValue={v.nama} error={errors.nama} />
-      <Field label="Email kampus" name="email" type="email" autoComplete="email" placeholder="nama@student.unhas.ac.id" defaultValue={v.email} error={errors.email} />
+      <Field label="Email kampus" name="email" type="email" autoComplete="email" placeholder="namaanda@student.unhas.ac.id" defaultValue={v.email} error={errors.email} />
       <Field label="NIM" name="nomor_identitas" defaultValue={v.nomor_identitas} error={errors.nomor_identitas} />
       <Field label="Password (minimal 8 karakter)" name="password" type="password" autoComplete="new-password" error={errors.password} />
       <Field label="Konfirmasi password" name="konfirmasi" type="password" autoComplete="new-password" error={errors.konfirmasi} />

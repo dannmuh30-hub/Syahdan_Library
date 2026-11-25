@@ -85,7 +85,7 @@ export default function BookSlider({ books, label }) {
                     }
                   }}
                   className={
-                    "relative block aspect-[2/3] overflow-hidden rounded-2xl border border-white/10 outline-none focus-visible:ring-2 focus-visible:ring-white " +
+                    "relative block aspect-[2/3] overflow-hidden rounded-2xl border border-stone-200 outline-none focus-visible:ring-2 focus-visible:ring-white " +
                     (active ? "shadow-[0_20px_60px_-10px_rgba(232,48,58,0.55)]" : "")
                   }
                 >
@@ -124,26 +124,25 @@ export default function BookSlider({ books, label }) {
 
       {n > 1 && (
         <div className="mt-2 flex items-center justify-center gap-3">
-          <button suppressHydrationWarning type="button" onClick={() => go(-1)} aria-label="Sebelumnya" className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20">
+          <button type="button" onClick={() => go(-1)} aria-label="Sebelumnya" className="flex h-9 w-9 items-center justify-center rounded-full bg-stone-200 text-stone-800 hover:bg-stone-300">
             ‹
           </button>
           <div className="flex items-center gap-1.5" role="group" aria-label="Pilih slide">
             {books.map((b, idx) => (
               <button
-                suppressHydrationWarning
                 key={b.id}
                 type="button"
                 onClick={() => setI(idx)}
                 aria-label={`Tampilkan ${b.judul}`}
                 aria-current={idx === i ? "true" : undefined}
-                className={"h-1.5 rounded-full transition-all " + (idx === i ? "w-6 bg-amber-800" : "w-1.5 bg-white/30 hover:bg-white/50")}
+                className={"h-1.5 rounded-full transition-all " + (idx === i ? "w-6 bg-amber-800" : "w-1.5 bg-stone-400/60 hover:bg-stone-500")}
               />
             ))}
           </div>
-          <button suppressHydrationWarning type="button" onClick={() => go(1)} aria-label="Berikutnya" className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20">
+          <button type="button" onClick={() => go(1)} aria-label="Berikutnya" className="flex h-9 w-9 items-center justify-center rounded-full bg-stone-200 text-stone-800 hover:bg-stone-300">
             ›
           </button>
-          <button suppressHydrationWarning type="button" onClick={() => setManualPause((p) => !p)} className="ml-1 rounded-full border border-white/20 px-3 py-1 text-xs text-white/80 hover:bg-white/10" aria-pressed={manualPause}>
+          <button type="button" onClick={() => setManualPause((p) => !p)} className="ml-1 rounded-full border border-stone-300 px-3 py-1 text-xs text-stone-700 hover:bg-stone-100" aria-pressed={manualPause}>
             {manualPause ? "Putar" : "Jeda"}
           </button>
         </div>

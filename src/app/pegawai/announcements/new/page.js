@@ -4,6 +4,7 @@ import { todayIso } from "@/lib/format";
 
 export const metadata = { title: "Tambah Pengumuman" };
 
+
 async function NewAnnouncement() {
   return <AnnouncementForm defaultDate={todayIso()} />;
 }

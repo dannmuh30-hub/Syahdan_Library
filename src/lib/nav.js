@@ -59,7 +59,7 @@ const MAHASISWA = [
     items: [{ href: "/mahasiswa", label: "Dashboard", icon: "home", exact: true }],
   },
   {
-    label: "Nongkread",
+    label: "Perpustakaan",
     items: [
       { href: "/mahasiswa/loans", label: "Peminjaman Saya", icon: "swap" },
       { href: "/mahasiswa/requests", label: "Request Buku", icon: "inbox" },

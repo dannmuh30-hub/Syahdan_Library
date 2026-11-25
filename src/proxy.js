@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { COOKIE_NAME, verifyToken } from "@/lib/token";
 
+
+
 const ROLE_FOR_PREFIX = {
   "/admin": ["admin"],
   "/pegawai": ["pegawai", "admin"],
@@ -8,8 +10,19 @@ const ROLE_FOR_PREFIX = {
 };
 const HOME = { admin: "/admin", pegawai: "/pegawai", mahasiswa: "/mahasiswa" };
 
+
+
+const PUBLIC_PREFIXES = ["/katalog", "/buku", "/pengumuman"];
+
 export function proxy(request) {
   const { pathname } = request.nextUrl;
+
+  if (pathname === "/" || PUBLIC_PREFIXES.some((p) => pathname === p || pathname.startsWith(p + "/"))) {
+    const session = verifyToken(request.cookies.get(COOKIE_NAME)?.value);
+    if (session?.role === "admin") return NextResponse.redirect(new URL("/admin", request.url));
+    return NextResponse.next();
+  }
+
   const prefix = Object.keys(ROLE_FOR_PREFIX).find(
     (p) => pathname === p || pathname.startsWith(p + "/")
   );
@@ -24,5 +37,5 @@ export function proxy(request) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/pegawai/:path*", "/mahasiswa/:path*"],
+  matcher: ["/", "/katalog", "/buku/:path*", "/pengumuman/:path*", "/admin/:path*", "/pegawai/:path*", "/mahasiswa/:path*"],
 };

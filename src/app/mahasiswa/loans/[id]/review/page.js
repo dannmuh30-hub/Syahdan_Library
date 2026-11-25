@@ -11,6 +11,7 @@ async function ReviewPage({ params, user }) {
   const id = parseId((await params).id);
   if (!id) notFound();
 
+  
   const { rows } = await query(
     `SELECT l.id, l.book_id, b.judul, b.pengarang, to_char(l.tanggal_kembali, 'YYYY-MM-DD') AS kembali
        FROM loans l JOIN books b ON b.id = l.book_id

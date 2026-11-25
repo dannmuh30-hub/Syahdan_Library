@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+
 export default function StatCard({ label, value, href, tone = "default", hint }) {
   const toneCls =
     tone === "warn" ? "border-red-200 bg-red-50" : tone === "attn" ? "border-amber-300 bg-amber-50" : "border-stone-200";

@@ -1,4 +1,3 @@
-import { redirect } from "next/navigation";
 import StaffShell from "@/components/StaffShell";
 import BookForm from "@/components/BookForm";
 import { query } from "@/lib/db";
@@ -8,8 +7,8 @@ import { parseId } from "@/lib/validation";
 export const metadata = { title: "Tambah Buku" };
 
 async function NewBook({ searchParams }) {
-  const user = await requireRole("pegawai", "admin");
-  if (user.role !== "admin") redirect("/pegawai/books?err=adminonly");
+  
+  await requireRole("pegawai", "admin");
 
   const sp = await searchParams;
   const { rows: categories } = await query("SELECT id, nama FROM categories ORDER BY nama");
@@ -17,6 +16,7 @@ async function NewBook({ searchParams }) {
     return <p className="rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-200">Belum ada kategori. Tambahkan kategori terlebih dahulu.</p>;
   }
 
+  
   let prefill;
   const requestId = parseId(sp.request);
   if (requestId) {

@@ -7,6 +7,7 @@ import { createSession, destroySession } from "@/lib/session";
 import { ROLE_HOME } from "@/lib/auth";
 import { validateLogin, validateRegister } from "@/lib/validation";
 
+
 const DUMMY_HASH = "$2a$10$CwTycUXWue0Thq9StjUM0uJ8.7vNQoYHzTrVHaFjv0cC0vXqCk3He";
 
 export async function registerAction(prevState, formData) {
@@ -27,6 +28,7 @@ export async function registerAction(prevState, formData) {
     user = rows[0];
   } catch (err) {
     if (err.code === "23505") {
+      
       const field = String(err.constraint).includes("email") ? "email" : "nomor_identitas";
       const message = field === "email" ? "Email sudah terdaftar." : "NIM sudah terdaftar.";
       return { errors: { [field]: message }, values: safeValues };

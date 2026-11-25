@@ -8,7 +8,6 @@ import { Field, TextArea, SelectField, SubmitButton, useFormKey } from "@/compon
 const ROLE_OPTIONS = [
   { value: "mahasiswa", label: "Mahasiswa" },
   { value: "pegawai", label: "Pegawai Perpustakaan" },
-  { value: "admin", label: "Admin" },
 ];
 const STATUS_OPTIONS = [
   { value: "true", label: "Aktif" },
@@ -34,6 +33,7 @@ function Actions({ pending, cancelHref, children }) {
     </div>
   );
 }
+
 
 export function UserForm({ user }) {
   const editing = Boolean(user);
@@ -71,6 +71,7 @@ export function UserForm({ user }) {
     </form>
   );
 }
+
 
 export function CategoryForm({ category }) {
   const editing = Boolean(category);

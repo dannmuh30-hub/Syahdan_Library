@@ -1,5 +1,6 @@
 "use client";
 
+
 export default function DeleteForm({ action, id, confirmText }) {
   return (
     <form

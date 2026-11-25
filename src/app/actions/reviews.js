@@ -5,6 +5,8 @@ import { query } from "@/lib/db";
 import { requireRole } from "@/lib/auth";
 import { parseId, validateReview } from "@/lib/validation";
 
+
+
 export async function createReviewAction(prevState, formData) {
   const user = await requireRole("mahasiswa");
   const loanId = parseId(formData.get("loan_id"));
@@ -15,6 +17,7 @@ export async function createReviewAction(prevState, formData) {
 
   let created;
   try {
+    
     const result = await query(
       `INSERT INTO reviews (loan_id, user_id, book_id, rating, komentar)
        SELECT l.id, l.user_id, l.book_id, $3::int, $4

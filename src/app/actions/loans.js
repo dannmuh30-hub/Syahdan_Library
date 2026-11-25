@@ -6,6 +6,8 @@ import { requireRole } from "@/lib/auth";
 import { parseId, validateRejectReason } from "@/lib/validation";
 import { MAX_PERPANJANGAN } from "@/lib/rules";
 
+
+
 export async function ajukanPinjamAction(formData) {
   const user = await requireRole("mahasiswa");
   const bookId = parseId(formData.get("book_id"));
@@ -16,6 +18,7 @@ export async function ajukanPinjamAction(formData) {
   if (!books[0]) redirect("/katalog");
   if (books[0].stok_tersedia <= 0) redirect(`${back}?err=stok`);
 
+  
   const { rows: denda } = await query(
     "SELECT 1 FROM loans WHERE user_id = $1 AND status_denda = 'Tertunggak' LIMIT 1",
     [user.id]
@@ -25,11 +28,19 @@ export async function ajukanPinjamAction(formData) {
   try {
     await query("INSERT INTO loans (user_id, book_id) VALUES ($1, $2)", [user.id, bookId]);
   } catch (err) {
+    
     if (err.code === "23505") redirect(`${back}?err=duplicate`);
     throw err;
   }
   redirect(`${back}?ok=requested`);
 }
+
+
+
+
+
+
+
 
 const LOANS = "/pegawai/loans";
 
@@ -45,7 +56,7 @@ export async function approveLoanAction(formData) {
     );
     const loan = loans[0];
     if (!loan) return "notfound";
-    if (loan.status !== "Menunggu Konfirmasi") return "state";
+    if (loan.status !== "Menunggu Konfirmasi") return "state"; 
 
     const { rows: books } = await client.query(
       "SELECT stok_tersedia, durasi_maks_pinjam FROM books WHERE id = $1 FOR UPDATE",
@@ -84,6 +95,7 @@ export async function rejectLoanAction(formData) {
   const { alasan, error } = validateRejectReason(formData);
   if (error) redirect(`${LOANS}?err=reason`);
 
+  
   const result = await query(
     `UPDATE loans
         SET status = 'Ditolak', alasan_penolakan = $2, approved_by = $3
@@ -116,11 +128,13 @@ export async function returnLoanAction(formData) {
       [loan.book_id]
     );
 
+    
     await client.query(
       "UPDATE books SET stok_tersedia = LEAST(stok_total, stok_tersedia + 1) WHERE id = $1",
       [loan.book_id]
     );
 
+    
     const { rows: done } = await client.query(
       `UPDATE loans
           SET status = 'Selesai',
@@ -139,6 +153,11 @@ export async function returnLoanAction(formData) {
   if (code.startsWith("returned")) redirect(`${LOANS}?tab=dipinjam&ok=${code}`);
   redirect(`${LOANS}?tab=dipinjam&err=${code}`);
 }
+
+
+
+
+
 
 const MY_LOANS = "/mahasiswa/loans";
 
@@ -159,6 +178,7 @@ export async function requestExtensionAction(formData) {
   );
   if (result.rowCount === 1) redirect(`${MY_LOANS}?ok=ext_requested`);
 
+  
   const { rows } = await query(
     `SELECT status, status_perpanjangan, jumlah_perpanjangan, (tanggal_jatuh_tempo < CURRENT_DATE) AS lewat
        FROM loans WHERE id = $1 AND user_id = $2`,
@@ -181,6 +201,7 @@ export async function approveExtensionAction(formData) {
   const id = parseId(formData.get("id"));
   if (!id) redirect(`${LOANS}?tab=perpanjangan&err=notfound`);
 
+  
   const result = await query(
     `UPDATE loans l
         SET tanggal_jatuh_tempo = l.tanggal_jatuh_tempo + b.durasi_maks_pinjam,
@@ -208,6 +229,9 @@ export async function rejectExtensionAction(formData) {
   if (result.rowCount === 0) redirect(`${LOANS}?tab=perpanjangan&err=state`);
   redirect(`${LOANS}?tab=perpanjangan&ok=ext_rejected`);
 }
+
+
+
 
 export async function markFinePaidAction(formData) {
   await requireRole("pegawai", "admin");

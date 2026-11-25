@@ -14,13 +14,11 @@ const MESSAGES = {
     active: "Buku tidak dapat dihapus karena sedang dipinjam atau memiliki pengajuan yang menunggu.",
     history: "Buku tidak dapat dihapus karena memiliki riwayat peminjaman.",
     notfound: "Buku tidak ditemukan.",
-    adminonly: "Menambah dan menghapus buku hanya dapat dilakukan oleh Admin.",
   },
 };
 
 async function BookList({ searchParams }) {
-  const user = await requireRole("pegawai", "admin");
-  const isAdmin = user.role === "admin";
+  await requireRole("pegawai", "admin");
   const sp = await searchParams;
   const q = typeof sp.q === "string" ? sp.q.trim().slice(0, 100) : "";
   const pattern = q ? `%${q.replace(/[\\%_]/g, "\\$&")}%` : null;
@@ -47,13 +45,9 @@ async function BookList({ searchParams }) {
           />
           <button className="rounded-lg border border-stone-300 px-3 py-2 text-sm hover:bg-stone-100">Cari</button>
         </form>
-        {isAdmin ? (
-          <Link href="/pegawai/books/new" className="rounded-lg bg-amber-800 px-4 py-2 text-sm font-medium text-white hover:bg-amber-900">
-            Tambah Buku
-          </Link>
-        ) : (
-          <p className="text-xs text-stone-500">Menambah dan menghapus buku hanya dapat dilakukan oleh Admin.</p>
-        )}
+        <Link href="/pegawai/books/new" className="rounded-lg bg-amber-800 px-4 py-2 text-sm font-medium text-white hover:bg-amber-900">
+          Tambah Buku
+        </Link>
       </div>
       <div className="overflow-x-auto rounded-xl border border-stone-200">
         <table className="w-full text-left text-sm">
@@ -92,7 +86,7 @@ async function BookList({ searchParams }) {
                     <Link href={`/pegawai/books/${b.id}/edit`} className="text-sm font-medium text-amber-800 hover:underline">
                       Edit
                     </Link>
-                    {isAdmin && <DeleteForm action={deleteBookAction} id={b.id} confirmText={`Hapus buku "${b.judul}"?`} />}
+                    <DeleteForm action={deleteBookAction} id={b.id} confirmText={`Hapus buku "${b.judul}"?`} />
                   </div>
                 </td>
               </tr>

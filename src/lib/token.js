@@ -1,5 +1,7 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 
+
+
 export const COOKIE_NAME = "perpus_session";
 
 function secret() {
@@ -18,6 +20,7 @@ export function signToken(payload) {
   const body = Buffer.from(JSON.stringify(payload)).toString("base64url");
   return `${body}.${sign(body)}`;
 }
+
 
 export function verifyToken(token) {
   if (!token || typeof token !== "string") return null;

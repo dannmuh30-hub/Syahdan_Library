@@ -110,6 +110,7 @@ async function LoanDesk({ searchParams }) {
       [pattern]
     ));
   } else if (tab === "dipinjam") {
+    
     ({ rows } = await query(
       `SELECT l.id, u.nama, u.nomor_identitas AS nim, b.judul,
               to_char(l.tanggal_pinjam, 'YYYY-MM-DD') AS pinjam,

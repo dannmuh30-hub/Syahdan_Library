@@ -3,7 +3,9 @@ import { cookies } from "next/headers";
 import { connection } from "next/server";
 import { COOKIE_NAME, signToken, verifyToken } from "@/lib/token";
 
-const MAX_AGE_SECONDS = 60 * 60 * 24 * 7;
+
+
+const MAX_AGE_SECONDS = 60 * 60 * 24 * 7; 
 
 export async function createSession(user) {
   const token = signToken({
@@ -22,6 +24,7 @@ export async function createSession(user) {
 
 export async function getSession() {
   const token = (await cookies()).get(COOKIE_NAME)?.value;
+  
   await connection();
   return verifyToken(token);
 }

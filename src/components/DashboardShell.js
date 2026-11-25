@@ -2,6 +2,8 @@ import { Suspense } from "react";
 import { requireRole } from "@/lib/auth";
 import { logoutAction } from "@/app/actions/auth";
 
+
+
 async function Content({ roles, title, children }) {
   const user = await requireRole(...roles);
   return (
