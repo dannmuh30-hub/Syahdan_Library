@@ -1,84 +1,33 @@
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 INSERT INTO users (nama, email, password_hash, role, nomor_identitas) VALUES
- ('Administrator Perpustakaan', 'admin@perpus.ac.id',        crypt('admin123',     gen_salt('bf', 10)), 'admin',     'ADM-0001'),   
- ('Pegawai Sirkulasi',          'pegawai@perpus.ac.id',      crypt('pegawai123',   gen_salt('bf', 10)), 'pegawai',   'PGW-0001'),   
- ('Andi Pratama',               'andi@student.unhas.ac.id',  crypt('mahasiswa123', gen_salt('bf', 10)), 'mahasiswa', 'H071231001'), 
- ('Siti Aisyah',                'siti@student.unhas.ac.id',  crypt('mahasiswa123', gen_salt('bf', 10)), 'mahasiswa', 'H071231002'), 
- ('Rudi Hartono',               'rudi@student.unhas.ac.id',  crypt('mahasiswa123', gen_salt('bf', 10)), 'mahasiswa', 'H071231003'); 
+ ('Administrator Perpustakaan', 'admin@perpus.ac.id',        crypt('admin123',     gen_salt('bf', 10)), 'admin',     'ADM-0001'),
+ ('Pegawai Sirkulasi',          'pegawai@perpus.ac.id',      crypt('pegawai123',   gen_salt('bf', 10)), 'pegawai',   'PGW-0001'),
+ ('Andi Pratama',               'andi@student.unhas.ac.id',  crypt('mahasiswa123', gen_salt('bf', 10)), 'mahasiswa', 'H071231001'),
+ ('Siti Aisyah',                'siti@student.unhas.ac.id',  crypt('mahasiswa123', gen_salt('bf', 10)), 'mahasiswa', 'H071231002'),
+ ('Rudi Hartono',               'rudi@student.unhas.ac.id',  crypt('mahasiswa123', gen_salt('bf', 10)), 'mahasiswa', 'H071231003');
 
 INSERT INTO categories (nama, kode, deskripsi) VALUES
- ('Teknologi Informasi', 'TI-004', 'Pemrograman, basis data, jaringan, dan sistem informasi'),  
- ('Hukum',               'HK-340', 'Ilmu hukum, perundang-undangan, dan tata negara'),          
- ('Kedokteran',          'KD-610', 'Ilmu kedokteran dan kesehatan'),                            
- ('Sastra & Bahasa',     'SB-800', 'Novel, puisi, linguistik, dan kajian bahasa');              
+ ('Teknologi Informasi', 'TI-004', 'Pemrograman, basis data, jaringan, dan sistem informasi'),
+ ('Hukum',               'HK-340', 'Ilmu hukum, perundang-undangan, dan tata negara'),
+ ('Kedokteran',          'KD-610', 'Ilmu kedokteran dan kesehatan'),
+ ('Sastra & Bahasa',     'SB-800', 'Novel, puisi, linguistik, dan kajian bahasa'),
+ ('Misteri & Thriller',  'MT-813', 'Novel misteri, detektif, dan thriller psikologis'),
+ ('Romansa',             'RM-813', 'Novel romansa dan komedi romantis'),
+ ('Psikologi & Memoar',  'PM-150', 'Psikologi populer, kesehatan jiwa, dan memoar'),
+ ('Pengembangan Diri',   'PD-158', 'Pengembangan diri dan keterampilan hidup'),
+ ('Fiksi Ilmiah',        'FI-813', 'Fiksi ilmiah dan fantasi');
 
 INSERT INTO books (judul, isbn, pengarang, penerbit, tahun_terbit, category_id,
                    stok_total, stok_tersedia, durasi_maks_pinjam, denda_per_hari, cover_url) VALUES
- ('Pemrograman Web dengan Next.js',    '978-602-0000-001', 'Andi Wijaya',      'Informatika',       2023, 1, 5, 4,  7, 1000, NULL), 
- ('Basis Data: Konsep dan PostgreSQL', '978-602-0000-002', 'Rina Wulandari',   'Andi Offset',       2021, 1, 4, 3,  7, 1000, NULL), 
- ('Rekayasa Perangkat Lunak',          '978-602-0000-003', 'Roger Pressman',   'Erlangga',          2019, 1, 3, 3, 14, 1500, NULL), 
- ('Pengantar Hukum Indonesia',         '978-602-0000-004', 'Sudikno M.',       'Liberty',           2018, 2, 3, 3, 14, 1000, NULL), 
- ('Hukum Tata Negara',                 '978-602-0000-005', 'Jimly Asshiddiqie','Rajawali Pers',     2020, 2, 2, 2, 14, 1000, NULL), 
- ('Anatomi Dasar Manusia',             '978-602-0000-006', 'Dewi Kartika',     'EGC',               2022, 3, 4, 4,  7, 2000, NULL), 
- ('Laskar Pelangi',                    '978-602-0000-007', 'Andrea Hirata',    'Bentang',           2005, 4, 6, 6, 14,  500, NULL), 
- ('Bumi Manusia',                      '978-602-0000-008', 'Pramoedya A. T.',  'Lentera Dipantara', 2006, 4, 5, 5, 14,  500, NULL); 
-
-INSERT INTO announcements (judul, konten, kategori, tanggal_rilis, status, author_id) VALUES
- ('Jadwal Layanan Selama Libur Akhir Tahun',
-  'Perpustakaan tutup pada 24 Desember 2026 sampai 1 Januari 2027. Layanan normal kembali 4 Januari 2027.',
-  'Operasional', CURRENT_DATE, 'Published', 2),
- ('Pengadaan Buku Baru Semester Genap',
-  'Perpustakaan menambah 120 judul buku baru bidang teknologi informasi dan hukum.',
-  'Layanan', CURRENT_DATE - 2, 'Published', 2),
- ('Workshop Literasi Informasi',
-  'Workshop pencarian referensi ilmiah terbuka untuk seluruh mahasiswa. Pendaftaran di meja sirkulasi.',
-  'Acara', CURRENT_DATE - 5, 'Published', 2),
- ('Draft: Perubahan Jam Layanan Hari Jumat',
-  'Rencana perubahan jam layanan hari Jumat. Belum final.',
-  'Operasional', CURRENT_DATE, 'Draft', 2);
-
-INSERT INTO loans (user_id, book_id, status, alasan_penolakan, tanggal_pengajuan,
-                   tanggal_pinjam, tanggal_jatuh_tempo, tanggal_kembali,
-                   status_perpanjangan, jumlah_perpanjangan, denda_nominal, status_denda,
-                   approved_by, returned_by) VALUES
- 
- (3, 3, 'Menunggu Konfirmasi', NULL, NOW() - INTERVAL '1 hour',
-  NULL, NULL, NULL, 'Tidak Ada', 0, 0, 'Tidak Ada', NULL, NULL),
- 
- (3, 1, 'Sedang Dipinjam', NULL, NOW() - INTERVAL '2 days',
-  CURRENT_DATE - 2, CURRENT_DATE + 5, NULL, 'Tidak Ada', 0, 0, 'Tidak Ada', 2, NULL),
- 
- (4, 2, 'Sedang Dipinjam', NULL, NOW() - INTERVAL '10 days',
-  CURRENT_DATE - 10, CURRENT_DATE - 3, NULL, 'Tidak Ada', 0, 0, 'Tidak Ada', 2, NULL),
- 
- (4, 7, 'Selesai', NULL, NOW() - INTERVAL '20 days',
-  CURRENT_DATE - 20, CURRENT_DATE - 6, CURRENT_DATE - 8, 'Tidak Ada', 0, 0, 'Tidak Ada', 2, 2),
- 
- (5, 1, 'Selesai', NULL, NOW() - INTERVAL '25 days',
-  CURRENT_DATE - 25, CURRENT_DATE - 18, CURRENT_DATE - 14, 'Tidak Ada', 0, 4000, 'Tertunggak', 2, 2),
- 
- (3, 8, 'Selesai', NULL, NOW() - INTERVAL '30 days',
-  CURRENT_DATE - 30, CURRENT_DATE - 16, CURRENT_DATE - 14, 'Perpanjangan Disetujui', 1, 1000, 'Lunas', 2, 2),
- 
- (4, 6, 'Ditolak', 'Buku sedang dalam proses inventarisasi.', NOW() - INTERVAL '4 days',
-  NULL, NULL, NULL, 'Tidak Ada', 0, 0, 'Tidak Ada', 2, NULL),
- 
- (3, 4, 'Selesai', NULL, NOW() - INTERVAL '40 days',
-  CURRENT_DATE - 40, CURRENT_DATE - 26, CURRENT_DATE - 30, 'Tidak Ada', 0, 0, 'Tidak Ada', 2, 2);
-
-INSERT INTO reviews (loan_id, user_id, book_id, rating, komentar) VALUES
- (4, 4, 7, 5, 'Cerita yang menginspirasi, sangat layak dibaca semua mahasiswa.'),
- (6, 3, 8, 4, 'Bahasanya berat tetapi isinya sangat berbobot.'),
- (8, 3, 4, 4, 'Pengantar yang jelas untuk pemula di bidang hukum.');
-
-INSERT INTO categories (nama, kode, deskripsi) VALUES
- ('Misteri & Thriller',          'MT-813', 'Novel misteri, detektif, dan thriller psikologis'),
- ('Romansa',                     'RM-813', 'Novel romansa dan komedi romantis'),
- ('Psikologi & Memoar',          'PM-150', 'Psikologi populer, kesehatan jiwa, dan memoar'),
- ('Pengembangan Diri',           'PD-158', 'Pengembangan diri dan keterampilan hidup'),
- ('Fiksi Ilmiah',                'FI-813', 'Fiksi ilmiah dan fantasi')
-ON CONFLICT DO NOTHING;
+ ('Pemrograman Web dengan Next.js',    '978-602-0000-001', 'Andi Wijaya',       'Informatika',       2023, 1, 5, 4,  7, 1000, NULL),
+ ('Basis Data: Konsep dan PostgreSQL', '978-602-0000-002', 'Rina Wulandari',    'Andi Offset',       2021, 1, 4, 3,  7, 1000, NULL),
+ ('Rekayasa Perangkat Lunak',          '978-602-0000-003', 'Roger Pressman',    'Erlangga',          2019, 1, 3, 3, 14, 1500, NULL),
+ ('Pengantar Hukum Indonesia',         '978-602-0000-004', 'Sudikno M.',        'Liberty',           2018, 2, 3, 3, 14, 1000, NULL),
+ ('Hukum Tata Negara',                 '978-602-0000-005', 'Jimly Asshiddiqie', 'Rajawali Pers',     2020, 2, 2, 2, 14, 1000, NULL),
+ ('Anatomi Dasar Manusia',             '978-602-0000-006', 'Dewi Kartika',      'EGC',               2022, 3, 4, 4,  7, 2000, NULL),
+ ('Laskar Pelangi',                    '978-602-0000-007', 'Andrea Hirata',     'Bentang',           2005, 4, 6, 6, 14,  500, NULL),
+ ('Bumi Manusia',                      '978-602-0000-008', 'Pramoedya A. T.',   'Lentera Dipantara', 2006, 4, 5, 5, 14,  500, NULL);
 
 INSERT INTO books (judul, isbn, pengarang, penerbit, tahun_terbit, category_id,
                    stok_total, stok_tersedia, durasi_maks_pinjam, denda_per_hari, deskripsi)
@@ -105,13 +54,7 @@ SELECT v.judul, v.isbn, v.pengarang, v.penerbit, v.tahun, c.id, 3, 3, 14, 1000, 
  ('The Night We Met', '978-602-1000-019', 'Abby Jimenez', 'Forever', 2026, 'Romansa', 'Kisah pilihan hidup dan persahabatan setelah satu keputusan sepulang konser mengubah arah hubungan mereka.'),
  ('Whistler', '978-602-1000-020', 'Ann Patchett', 'Harper', 2026, 'Sastra & Bahasa', 'Pertemuan tak terduga di museum seni mempertemukan kembali seorang perempuan dengan mantan ayah tirinya')
   ) AS v(judul, isbn, pengarang, penerbit, tahun, kategori, deskripsi)
-  JOIN categories c ON c.nama = v.kategori
- WHERE NOT EXISTS (SELECT 1 FROM books b WHERE lower(b.judul) = lower(v.judul))
-ON CONFLICT (isbn) DO NOTHING;
-
-INSERT INTO book_requests (user_id, judul, pengarang, penerbit, tahun_terbit, alasan, status, catatan_admin, reviewed_by, reviewed_at) VALUES
- (3, 'Atomic Habits', 'James Clear', 'Gramedia Pustaka Utama', 2019, 'Banyak dibutuhkan teman satu angkatan untuk membangun kebiasaan belajar.', 'Menunggu', NULL, NULL, NULL),
- (4, 'Filosofi Teras', 'Henry Manampiring', 'Buku Kompas', 2018, 'Pengantar filsafat Stoa yang mudah dipahami mahasiswa.', 'Ditolak', 'Judul sedang dalam proses pengadaan; coba ajukan kembali bulan depan.', 1, NOW());
+  JOIN categories c ON c.nama = v.kategori;
 
 UPDATE books b
    SET cover_url = v.url
@@ -139,10 +82,55 @@ UPDATE books b
  ('Whistler', 'https://i.pinimg.com/236x/12/6b/b6/126bb67d906a126493d1350b18fdcf36.jpg'),
  ('Yellowface', 'https://i.pinimg.com/1200x/b1/40/03/b140032e77ee3cbc20dbd03ac567b0ac.jpg'),
  ('I Want to Die but I Want to Eat Tteokbokki', 'https://cdn.gramedia.com/uploads/products/xtbt5ziitw.jpg'),
- ('Basis Data: Konsep dan PostgreSQL', 'https://i.pinimg.com/736x/6a/80/78/6a80789d013232709e870bd925050f97.jpg'),
+ ('Basis Data: Konsep dan PostgreSQL', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCqcmFz-ERg-3SAUbJmkMF5YVwEITwhZhckaePlDiV3plKqn7k0qr_MoU&s=10'),
  ('Bumi Manusia', 'https://i.pinimg.com/1200x/6c/17/a4/6c17a4b5b319770f4cb180d6bc0ab54f.jpg'),
  ('Cantik Itu Luka', 'https://i.pinimg.com/736x/0c/82/83/0c828372aed61a93e91e51d25e3cf99e.jpg'),
  ('Dear Debbie', 'https://i.pinimg.com/736x/29/87/b9/2987b9bc0f6e78d65630905b694c0b75.jpg'),
  ('Dunia Sophie', 'https://i.pinimg.com/1200x/a0/81/4b/a0814b7e021a0d3c46de19dc2993efee.jpg')
   ) AS v(judul, url)
  WHERE lower(b.judul) = lower(v.judul);
+
+INSERT INTO announcements (judul, konten, kategori, tanggal_rilis, status, author_id) VALUES
+ ('Jadwal Layanan Selama Libur Akhir Tahun',
+  'Perpustakaan tutup pada 24 Desember 2026 sampai 1 Januari 2027. Layanan normal kembali 4 Januari 2027.',
+  'Operasional', CURRENT_DATE, 'Published', 2),
+ ('Pengadaan Buku Baru Semester Genap',
+  'Perpustakaan menambah 120 judul buku baru bidang teknologi informasi dan hukum.',
+  'Layanan', CURRENT_DATE - 2, 'Published', 2),
+ ('Workshop Literasi Informasi',
+  'Workshop pencarian referensi ilmiah terbuka untuk seluruh mahasiswa. Pendaftaran di meja sirkulasi.',
+  'Acara', CURRENT_DATE - 5, 'Published', 2),
+ ('Draft: Perubahan Jam Layanan Hari Jumat',
+  'Rencana perubahan jam layanan hari Jumat. Belum final.',
+  'Operasional', CURRENT_DATE, 'Draft', 2);
+
+INSERT INTO loans (user_id, book_id, status, alasan_penolakan, tanggal_pengajuan,
+                   tanggal_pinjam, tanggal_jatuh_tempo, tanggal_kembali,
+                   status_perpanjangan, jumlah_perpanjangan, denda_nominal, status_denda,
+                   approved_by, returned_by) VALUES
+ (3, 3, 'Menunggu Konfirmasi', NULL, NOW() - INTERVAL '1 hour',
+  NULL, NULL, NULL, 'Tidak Ada', 0, 0, 'Tidak Ada', NULL, NULL),
+ (3, 1, 'Sedang Dipinjam', NULL, NOW() - INTERVAL '2 days',
+  CURRENT_DATE - 2, CURRENT_DATE + 5, NULL, 'Tidak Ada', 0, 0, 'Tidak Ada', 2, NULL),
+ (4, 2, 'Sedang Dipinjam', NULL, NOW() - INTERVAL '10 days',
+  CURRENT_DATE - 10, CURRENT_DATE - 3, NULL, 'Tidak Ada', 0, 0, 'Tidak Ada', 2, NULL),
+ (4, 7, 'Selesai', NULL, NOW() - INTERVAL '20 days',
+  CURRENT_DATE - 20, CURRENT_DATE - 6, CURRENT_DATE - 8, 'Tidak Ada', 0, 0, 'Tidak Ada', 2, 2),
+ (5, 1, 'Selesai', NULL, NOW() - INTERVAL '25 days',
+  CURRENT_DATE - 25, CURRENT_DATE - 18, CURRENT_DATE - 14, 'Tidak Ada', 0, 4000, 'Tertunggak', 2, 2),
+ (3, 8, 'Selesai', NULL, NOW() - INTERVAL '30 days',
+  CURRENT_DATE - 30, CURRENT_DATE - 16, CURRENT_DATE - 14, 'Perpanjangan Disetujui', 1, 1000, 'Lunas', 2, 2),
+ (4, 6, 'Ditolak', 'Buku sedang dalam proses inventarisasi.', NOW() - INTERVAL '4 days',
+  NULL, NULL, NULL, 'Tidak Ada', 0, 0, 'Tidak Ada', 2, NULL),
+ (3, 4, 'Selesai', NULL, NOW() - INTERVAL '40 days',
+  CURRENT_DATE - 40, CURRENT_DATE - 26, CURRENT_DATE - 30, 'Tidak Ada', 0, 0, 'Tidak Ada', 2, 2);
+
+INSERT INTO reviews (loan_id, user_id, book_id, rating, komentar) VALUES
+ (4, 4, 7, 5, 'Cerita yang menginspirasi, sangat layak dibaca semua mahasiswa.'),
+ (6, 3, 8, 4, 'Bahasanya berat tetapi isinya sangat berbobot.'),
+ (8, 3, 4, 4, 'Pengantar yang jelas untuk pemula di bidang hukum.');
+
+INSERT INTO book_requests (user_id, judul, pengarang, penerbit, tahun_terbit, alasan, status, catatan_admin, reviewed_by, reviewed_at) VALUES
+ (3, 'Atomic Habits', 'James Clear', 'Gramedia Pustaka Utama', 2019, 'Banyak dibutuhkan teman satu angkatan untuk membangun kebiasaan belajar.', 'Menunggu', NULL, NULL, NULL),
+ (4, 'Filosofi Teras', 'Henry Manampiring', 'Buku Kompas', 2018, 'Pengantar filsafat Stoa yang mudah dipahami mahasiswa.', 'Ditolak', 'Judul sedang dalam proses pengadaan; coba ajukan kembali bulan depan.', 1, NOW());
+

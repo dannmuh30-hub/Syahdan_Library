@@ -1,8 +1,0 @@
-
-
-
-ALTER TABLE users ADD COLUMN IF NOT EXISTS foto_data   BYTEA;
-ALTER TABLE users ADD COLUMN IF NOT EXISTS foto_tipe   VARCHAR(20);
-ALTER TABLE users ADD COLUMN IF NOT EXISTS foto_diubah TIMESTAMP;
-ALTER TABLE users DROP CONSTRAINT IF EXISTS chk_foto_lengkap;
-ALTER TABLE users ADD CONSTRAINT chk_foto_lengkap CHECK ((foto_data IS NULL) = (foto_tipe IS NULL));

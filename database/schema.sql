@@ -14,9 +14,13 @@ CREATE TABLE users (
     password_hash    VARCHAR(100) NOT NULL,
     role             VARCHAR(20)  NOT NULL
                      CHECK (role IN ('admin', 'pegawai', 'mahasiswa')),
-    nomor_identitas  VARCHAR(30)  NOT NULL UNIQUE,   
+    nomor_identitas  VARCHAR(30)  NOT NULL UNIQUE,
     is_active        BOOLEAN      NOT NULL DEFAULT TRUE,
-    created_at       TIMESTAMP    NOT NULL DEFAULT NOW()
+    created_at       TIMESTAMP    NOT NULL DEFAULT NOW(),
+    foto_data        BYTEA,
+    foto_tipe        VARCHAR(20),
+    foto_diubah      TIMESTAMP,
+    CONSTRAINT chk_foto_lengkap CHECK ((foto_data IS NULL) = (foto_tipe IS NULL))
 );
 
 CREATE TABLE categories (
@@ -119,6 +123,7 @@ CREATE TABLE book_requests (
 );
 CREATE INDEX idx_book_requests_user   ON book_requests(user_id);
 CREATE INDEX idx_book_requests_status ON book_requests(status);
+
 CREATE UNIQUE INDEX uq_request_menunggu ON book_requests (user_id, lower(judul)) WHERE status = 'Menunggu';
 
 CREATE VIEW v_loans_denda AS
